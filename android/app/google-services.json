@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "509009856053",
+    "firebase_url": "https://totalhealthcare.firebaseio.com",
+    "project_id": "totalhealthcare",
+    "storage_bucket": "totalhealthcare.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509009856053:android:da4c2b7a7b48d6253a937c",
+        "android_client_info": {
+          "package_name": "com.thcMobile.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "509009856053-c1rbda50p8rafe80bj38jjv6eih7rjph.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thcMobile.android",
+            "certificate_hash": "c3b33278d19dc96269694708e3580182b996ffcc"
+          }
+        },
+        {
+          "client_id": "509009856053-qpic7cda72d71gph03k0h5kh7ivh6c40.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHWgbvS1V39uMzBna7QrEdqU9blfysZ0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "509009856053-qpic7cda72d71gph03k0h5kh7ivh6c40.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
