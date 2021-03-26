@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:provider/provider.dart';
@@ -9,6 +11,7 @@ import 'package:loading_overlay/loading_overlay.dart';
 import 'package:dio/dio.dart';
 import 'package:thcMobile/provider/user.dart';
 import 'package:thcMobile/models/patient.dart';
+import 'package:http/http.dart' as http;
 
 class PersonalProfile extends StatefulWidget {
   PersonalProfile({Key key, this.title}) : super(key: key);
@@ -36,53 +39,23 @@ class _PersonalProfileState extends State<PersonalProfile> {
         loading = true;
       });
     var responseJson;
-    Response response;
-    Dio dio = new Dio();
-
-    response = await dio
-        .get(
-      url + "patient-list/" + id + '/',
-      options: Options(
-          followRedirects: false,
-          validateStatus: (status) {
-            return status < 500;
-          },
-          headers: {
-            "Connection": 'keep-alive',
-            "Authorization": "Bearer " + token
-          }),
-    )
-        .catchError((e) {
-      if (mounted)
-        setState(() {
-          loading = false;
+    final response = await http.get(url + "patient-list/" + id ,
+        headers: {
+          "Connection": 'keep-alive',
+          "Authorization": "Bearer " + token
         });
-      print(e.response.data);
-      var message = '';
-      if (e.response.data['message'] != null) {
-        message = e.response.data['message'];
-      } else {
-        message = e.response.data.toString();
-      }
-    });
+    print(response.body);
     if (mounted)
       setState(() {
         loading = false;
       });
-    responseJson = response.data;
-    if (response.statusCode != 200) {
-      var message = '';
-      if (response.data['details'] != null) {
-        message = response.data['details'];
-      } else {
-        message = response.data.toString();
-      }
+    if (response.statusCode == 200) {
+      responseJson = json.decode(response.body);
+      if (mounted)
+        setState(() {
+          patient = Patient.fromJson(responseJson);
+        });
     }
-    print(responseJson);
-    if (mounted)
-      setState(() {
-        patient = Patient.fromJson(responseJson);
-      });
     return true;
   }
 
@@ -101,131 +74,131 @@ class _PersonalProfileState extends State<PersonalProfile> {
                     height: MediaQuery.of(context).size.height,
                     child: new SingleChildScrollView(
                         child: Padding(
-                      padding: EdgeInsets.only(
-                          top: sizer(false, 50, context),
-                          left: sizer(true, 20, context),
-                          right: sizer(true, 20, context)),
-                      child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
+                          padding: EdgeInsets.only(
+                              top: sizer(false, 50, context),
+                              left: sizer(true, 20, context),
+                              right: sizer(true, 20, context)),
+                          child: Column(
                               mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                BackButtonWhite(
-                                  onPressed: () {},
+                                Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    BackButtonWhite(
+                                      onPressed: () {},
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                            SizedBox(height: sizer(false, 15, context)),
-                            HeaderText(title: 'Health Profile'),
-                            SizedBox(height: 19),
-                            loading ? SizedBox() : Column(
-                              children: [
-                                dataBox('Name', patient.user.name),
-                                dataBox(
-                                    'Date of birth',
-                                    patient.dateOfBirth != null
-                                        ? patient.dateOfBirth
-                                        : ''),
-                                dataBox('Current Address',
-                                    patient.address != null ? patient.address : ''),
-                                dataBox(
-                                    'Occupation',
-                                    patient.occupation != null
-                                        ? patient.occupation
-                                        : ''),
-                                dataBox(
-                                    'Marital Status',
-                                    patient.maritalStatus != null
-                                        ? patient.maritalStatus
-                                        : ''),
-                                dataBox('Tribe',
-                                    patient.tribe != null ? patient.tribe : ''),
-                                dataBox(
-                                    'NIN/Passport Number',
-                                    patient.ninNumber != null
-                                        ? patient.ninNumber
-                                        : ''),
-                                dataBox(
-                                    'Email',
-                                    patient.user != null &&
+                                SizedBox(height: sizer(false, 15, context)),
+                                HeaderText(title: 'Health Profile'),
+                                SizedBox(height: 19),
+                                loading ? SizedBox() : Column(
+                                  children: [
+                                    dataBox('Name', patient.user!= null?patient.user.name:''),
+                                    dataBox(
+                                        'Date of birth',
+                                        patient.dateOfBirth != null
+                                            ? patient.dateOfBirth
+                                            : ''),
+                                    dataBox('Current Address',
+                                        patient.address != null ? patient.address : ''),
+                                    dataBox(
+                                        'Occupation',
+                                        patient.occupation != null
+                                            ? patient.occupation
+                                            : ''),
+                                    dataBox(
+                                        'Marital Status',
+                                        patient.maritalStatus != null
+                                            ? patient.maritalStatus
+                                            : ''),
+                                    dataBox('Tribe',
+                                        patient.tribe != null ? patient.tribe : ''),
+                                    dataBox(
+                                        'NIN/Passport Number',
+                                        patient.ninNumber != null
+                                            ? patient.ninNumber
+                                            : ''),
+                                    dataBox(
+                                        'Email',
+                                        patient.user != null &&
                                             patient.user.email != null
-                                        ? patient.user.email
-                                        : ''),
-                                dataBox(
-                                    'Existing Medical Condition',
-                                    patient.existingConditions != null
-                                        ? patient.existingConditions
-                                        : ''),
-                                dataBox('Referred by', ''),
-                                dataBox(
-                                    'Next of Kin',
-                                    patient.nextOfKinName != null
-                                        ? patient.nextOfKinName
-                                        : ''),
-                                dataBox(
-                                    'Next of Kin Phone Number',
-                                    patient.nextOfKinPhoneNumber != null
-                                        ? patient.nextOfKinPhoneNumber
-                                        : ''),
-                                dataBox(
-                                    'Address of Next of Kin',
-                                    patient.nextOfKinAddress != null
-                                        ? patient.nextOfKinAddress
-                                        : ''),
-                                SizedBox(height: 29),
-                                Container(
-                                    height: 1.0,
-                                    color: Color.fromRGBO(142, 145, 156, 0.24)),
-                                SizedBox(height: 39),
-                                SubText(title: 'Biodata', isCenter: false),
-                                SizedBox(height: 24),
-                                dataBox('Gender',
-                                    patient.gender != null ? patient.gender : ''),
-                                dataBox(
-                                    'Age',
-                                    patient.age != null
-                                        ? patient.age.toString()
-                                        : ''),
-                                dataBox(
-                                    'Height',
-                                    patient.height != null
-                                        ? patient.height + 'cm'
-                                        : ''),
-                                dataBox(
-                                    'Weight',
-                                    patient.weight != null
-                                        ? patient.weight + 'kg'
-                                        : ''),
-                                dataBox(
-                                    'Blood Group',
-                                    patient.bloodGroup != null
-                                        ? patient.bloodGroup
-                                        : ''),
-                                dataBox(
-                                    'GenoType',
-                                    patient.haemoglobinGenotype != null
-                                        ? patient.haemoglobinGenotype
-                                        : ''),
-                                dataBox(
-                                    'BMI', patient.bmi != null ? patient.bmi : ''),
-                                dataBox(
-                                    'Blood Sugar',
-                                    patient.bloodSugar != null
-                                        ? patient.bloodSugar
-                                        : ''),
-                                dataBox(
-                                    'Allergies',
-                                    patient.allergies != null
-                                        ? patient.allergies
-                                        : ''),
-                              ],
-                            ),
-                          ]),
-                    )))),
+                                            ? patient.user.email
+                                            : ''),
+                                    dataBox(
+                                        'Existing Medical Condition',
+                                        patient.existingConditions != null
+                                            ? patient.existingConditions
+                                            : ''),
+                                    dataBox('Referred by', ''),
+                                    dataBox(
+                                        'Next of Kin',
+                                        patient.nextOfKinName != null
+                                            ? patient.nextOfKinName
+                                            : ''),
+                                    dataBox(
+                                        'Next of Kin Phone Number',
+                                        patient.nextOfKinPhoneNumber != null
+                                            ? patient.nextOfKinPhoneNumber
+                                            : ''),
+                                    dataBox(
+                                        'Address of Next of Kin',
+                                        patient.nextOfKinAddress != null
+                                            ? patient.nextOfKinAddress
+                                            : ''),
+                                    SizedBox(height: 29),
+                                    Container(
+                                        height: 1.0,
+                                        color: Color.fromRGBO(142, 145, 156, 0.24)),
+                                    SizedBox(height: 39),
+                                    SubText(title: 'Biodata', isCenter: false),
+                                    SizedBox(height: 24),
+                                    dataBox('Gender',
+                                        patient.gender != null ? patient.gender : ''),
+                                    dataBox(
+                                        'Age',
+                                        patient.age != null
+                                            ? patient.age.toString()
+                                            : ''),
+                                    dataBox(
+                                        'Height',
+                                        patient.height != null
+                                            ? patient.height + 'cm'
+                                            : ''),
+                                    dataBox(
+                                        'Weight',
+                                        patient.weight != null
+                                            ? patient.weight + 'kg'
+                                            : ''),
+                                    dataBox(
+                                        'Blood Group',
+                                        patient.bloodGroup != null
+                                            ? patient.bloodGroup
+                                            : ''),
+                                    dataBox(
+                                        'GenoType',
+                                        patient.haemoglobinGenotype != null
+                                            ? patient.haemoglobinGenotype
+                                            : ''),
+                                    dataBox(
+                                        'BMI', patient.bmi != null ? patient.bmi : ''),
+                                    dataBox(
+                                        'Blood Sugar',
+                                        patient.bloodSugar != null
+                                            ? patient.bloodSugar
+                                            : ''),
+                                    dataBox(
+                                        'Allergies',
+                                        patient.allergies != null
+                                            ? patient.allergies
+                                            : ''),
+                                  ],
+                                ),
+                              ]),
+                        )))),
             isLoading: loading));
   }
 
@@ -250,7 +223,7 @@ class _PersonalProfileState extends State<PersonalProfile> {
                 child: Text(data != '' ? data : 'N/A',
                     style: TextStyle(
                         color:
-                            data != '' ? Color(0xff071232) : Color(0xff828282),
+                        data != '' ? Color(0xff071232) : Color(0xff828282),
                         fontSize: sizer(true, 16.0, context))))
           ])
         ]);

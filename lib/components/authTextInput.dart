@@ -23,6 +23,7 @@ class AuthTextInput extends StatelessWidget {
     return TextFormField(
       onSaved: onChanged,
       controller: controller,
+      onChanged: onChanged,
       style: TextStyle(
           color: altTextColor ?? Color(0xff071232),
           fontWeight: FontWeight.w500,

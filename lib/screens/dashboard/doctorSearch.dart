@@ -313,7 +313,9 @@ class _DoctorSearchState extends State<DoctorSearch> {
               SizedBox(height: 20),
               SearchTextInput(
                 hintText: 'Search',
-                onChanged: (text) {},
+                onChanged: (text) {
+                  search();
+                },
                 textController: textController,
                 action: search,
               ),
