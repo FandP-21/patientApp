@@ -5,6 +5,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thcMobile/components/headerText.dart';
 import 'package:thcMobile/components/subText.dart';
 import 'package:thcMobile/helpers/store.dart';
@@ -504,6 +505,8 @@ class _DoctorInfoState extends State<DoctorInfo> {
                                             ),
                                           ),
                                           onTap: () async {
+
+                                            await Permission.camera.request().catchError((e)=>print(e));
                                             await Permission.microphone
                                                 .request()
                                                 .catchError((e) => print(e));
@@ -516,8 +519,7 @@ class _DoctorInfoState extends State<DoctorInfo> {
                                                             VoiceCall(
                                                               myAvatar: widget
                                                                   .myAvatar,
-                                                              myId: FirebaseAuth
-                                                                  .instance
+                                                              myId: FirebaseAuth.instance
                                                                   .currentUser
                                                                   .uid,
                                                               myName:
@@ -528,9 +530,11 @@ class _DoctorInfoState extends State<DoctorInfo> {
                                                                   .name,
                                                               peerAvatar: widget
                                                                   .doctor.photo,
-                                                              peerId: widget
-                                                                  .doctor
-                                                                  .firebaseId,
+                                                              // peerId: widget
+                                                              //     .doctor
+                                                              //     .firebaseId,
+                                                              peerId:FirebaseAuth.instance.currentUser.uid.toString() == "xJhg1Ik80aQKW4f9SOkwJ27eBC63"?"bymymer4uWTlE3w3Onh8kidP2Fo1":"xJhg1Ik80aQKW4f9SOkwJ27eBC63" ,
+
                                                             )))
                                                 : {};
                                           })

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
@@ -59,7 +60,8 @@ class _CallScreenState extends State<CallScreen> {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       userProvider = Provider.of<UserProvider>(context, listen: false);
       callStreamSubscription = callMethods
-          .callStream(uid: userProvider.getUser.uid)
+          // .callStream(uid: userProvider.getUser.uid)
+          .callStream(uid: FirebaseAuth.instance.currentUser.uid.toString()== "xJhg1Ik80aQKW4f9SOkwJ27eBC63"?"bymymer4uWTlE3w3Onh8kidP2Fo1":"xJhg1Ik80aQKW4f9SOkwJ27eBC63")
           .listen((DocumentSnapshot ds) {
         switch (ds.data) {
           case null:

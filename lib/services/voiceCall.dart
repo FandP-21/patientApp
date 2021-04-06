@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:thcMobile/screens/callscreens/call_screen_openvidu.dart';
 import 'package:thcMobile/utils/call_utilities.dart';
 import 'package:thcMobile/utils/permissions.dart';
 
@@ -109,24 +110,33 @@ class _VoiceCallState extends State<VoiceCall> {
                         ),
                         onTap: () {
                           // Navigator.pop(context);
-                          Future.delayed(
-                            Duration(seconds: 1),
-                            () async => await Permissions
-                                    .cameraAndMicrophonePermissionsGranted()
-                                ? CallUtils.dial({
-                                    "uid":
-                                        FirebaseAuth.instance.currentUser.uid,
-                                    // "uid": "Hd6steBvdwQwVMAfyIa31dM8F3O2",
-                                    "name": widget.myName,
-                                    "profilePhoto": widget.myAvatar,
-                                  }, {
-                                    "uid": widget.peerId,
-                                    // uid: "n23Ge8CKhXgL8TUpZXKZbdWTLzM2",
-                                    "name": widget.name,
-                                    "profilePhoto": widget.peerAvatar,
-                                  }, context)
-                                : {},
-                          );
+                          // Future.delayed(
+                          //   Duration(seconds: 1),
+                          //   () async => await Permissions
+                          //           .cameraAndMicrophonePermissionsGranted()
+                          //       ? CallUtils.dial({
+                          //           "uid":
+                          //               FirebaseAuth.instance.currentUser.uid,
+                          //           // "uid": "Hd6steBvdwQwVMAfyIa31dM8F3O2",
+                          //           "name": widget.myName,
+                          //           "profilePhoto": widget.myAvatar,
+                          //         }, {
+                          //     "uid": FirebaseAuth.instance.currentUser.uid.toString() == "xJhg1Ik80aQKW4f9SOkwJ27eBC63"?"bymymer4uWTlE3w3Onh8kidP2Fo1":"xJhg1Ik80aQKW4f9SOkwJ27eBC63",
+                          //     // "uid": widget.peerId,
+                          //           // uid: "n23Ge8CKhXgL8TUpZXKZbdWTLzM2",
+                          //           "name": widget.name,
+                          //           "profilePhoto": widget.peerAvatar,
+                          //         }, context)
+                          //       : {},
+                          // );
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => VideoCallOpen(userName: 'Gautam',sessionName: 'gautam10sep',
+                                    server: 'demos.openvidu.io:443',
+                                    secret: /*'2d6c828e-5c29-4072-a8ab-f72aea58d8e8'*/'MY_SECRET',iceServer: 'stun.l.google.com:19302',
+                                  )));
                         },
                       ),
                     ],

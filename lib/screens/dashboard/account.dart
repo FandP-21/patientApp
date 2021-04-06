@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:thcMobile/components/searchTextInput.dart';
 import 'package:thcMobile/helpers/store.dart';
@@ -223,7 +224,12 @@ class _AccountState extends State<Account> {
                               AccountListItem(
                                   last: true,
                                   title: 'Share app with friends',
-                                  onPressed: () => {}),
+                                  onPressed: (){
+                                    final RenderBox box = context.findRenderObject() as RenderBox;;
+                                    Share.share("https://flutter.dev",
+                                        sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
+
+                                  }),
                               SizedBox(
                                 height: 30,
                               ),
