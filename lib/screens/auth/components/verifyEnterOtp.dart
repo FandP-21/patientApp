@@ -85,7 +85,7 @@ class _VerifyEnterOtpBodyState extends State<VerifyEnterOtpBody> {
         // Write data to local
         currentUser = firebaseUser;
         await prefs.setString('firebaseId', currentUser.uid);
-        await http.patch("https://thc2020.herokuapp.com/patient-list/$id/",
+        await http.patch("http://3.21.124.223/patient-list/$id/",
             headers: {
               "Connection": 'keep-alive',
               "Authorization": "Bearer " + token
@@ -97,7 +97,7 @@ class _VerifyEnterOtpBodyState extends State<VerifyEnterOtpBody> {
       } else {
         // Write data to local
         await prefs.setString('firebaseId', documents[0].data()['id']);
-        await http.patch("https://thc2020.herokuapp.com/patient-list/$id/",
+        await http.patch("http://3.21.124.223/patient-list/$id/",
             headers: {
               "Connection": 'keep-alive',
               "Authorization": "Bearer " + token

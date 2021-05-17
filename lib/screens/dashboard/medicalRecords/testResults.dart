@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -11,7 +13,9 @@ import 'package:thcMobile/components/backButtonWhite.dart';
 import 'package:thcMobile/models/testResult.dart';
 import 'package:thcMobile/provider/user.dart';
 import 'package:thcMobile/screens/dashboard/healthPlans/components/hmoHeader.dart';
+import 'package:thcMobile/utils/call_utilities.dart';
 import 'testResultsDetails.dart';
+import 'package:http/http.dart' as http;
 
 class TestResults extends StatefulWidget {
   TestResults({Key key, this.title}) : super(key: key);
@@ -24,7 +28,10 @@ class TestResults extends StatefulWidget {
 class _TestResultsState extends State<TestResults> {
   bool loading = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  TextEditingController searchController = new TextEditingController();
   List<Tests> results = [];
+  List<Tests> copyListList = [];
+
   @override
   void initState() {
     super.initState();
@@ -42,79 +49,50 @@ class _TestResultsState extends State<TestResults> {
         loading = true;
       });
     var responseJson;
-    Response response;
-    Dio dio = new Dio();
-    response = await dio
-        .get(
-      url + "lab-test-result/?patient=$id",
-      options: Options(
-          followRedirects: false,
-          validateStatus: (status) {
-            return status < 500;
-          },
-          headers: {
-            "Connection": 'keep-alive',
-            "Authorization": "Bearer " + token
-          }),
-    )
-        .catchError((e) {
-      if (mounted)
-        setState(() {
-          loading = false;
+    final response = await http.get(url + "lab-test-result/$id",
+        headers: {
+          "Connection": 'keep-alive',
+          "Authorization": "Bearer " + token
         });
-      var message = '';
-      if (e.response.data['message'] != null) {
-        message = e.response.data['message'];
-      } else {
-        message = e.response.data.toString();
-      }
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text(
-            message,
-            style: TextStyle(
-              fontSize: sizer(true, 15.0, context),
-              color: Colors.white,
-            ),
-          ),
-        ),
-      );
-    });
+    print(response.body);
     if (mounted)
       setState(() {
         loading = false;
       });
-    responseJson = response.data;
-    print(responseJson);
-    if (response.statusCode != 200) {
-      var message = '';
-      if (response.data['detail'] != null) {
-        message = response.data['detail'];
-      } else {
-        message = response.data.toString();
+    if (response.statusCode == 200) {
+      responseJson = json.decode(response.body);
+      for (var i = 0; i < responseJson.length; i++) {
+          results.add(Tests.fromJson(responseJson[i]));
+          copyListList.add(Tests.fromJson(responseJson[i]));
       }
-      _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text(message,
-              style: TextStyle(
-                fontSize: sizer(true, 15.0, context),
-                color: Colors.white,
-              )),
-        ),
-      );
+      setState(() {
+      });
+    }else{
+      showInSnackBar('Error',_scaffoldKey,context);
     }
-    for (var i = 0; i < responseJson.length; i++) {
-      if (mounted)
-        setState(() {
-          results.add(
-            Tests.fromJson(responseJson[i]),
-          );
-        });
-    }
-
     return true;
   }
-
+  void filterSearchResults(String query) {
+    if (query.isNotEmpty) {
+      List<Tests> dummyListData =[];
+      for (int i = 0; i < copyListList.length; i++) {
+        if (copyListList[i].testName.name.toString().toLowerCase().contains(query.toLowerCase())) {
+          dummyListData.add(copyListList[i]);
+        }
+      }
+      setState(() {
+        results.clear();
+        results.addAll(dummyListData);
+      });
+      print(copyListList);
+      return;
+    } else {
+      setState(() {
+        results.clear();
+        results.addAll(copyListList);
+      });
+    }
+  }
   @override
   void dispose() {
     super.dispose();
@@ -153,12 +131,17 @@ class _TestResultsState extends State<TestResults> {
                   SizedBox(height: 15),
                   SearchTextInput(
                     hintText: 'Search for a result',
-                    onChanged: (text) {},
+                    textController: searchController,
+                    onChanged: (text) {
+                      filterSearchResults(text);
+                    },
                   ),
                   SizedBox(height: 10),
                   HmoHeader(
-                      onPressed: () {},
+                      onPressed: () {
+                      },
                       hmoNo: '${results.length} test results'),
+                  SizedBox(height: 15),
                   loading
                       ? CenterLoader()
                       : results != null && results.length > 0

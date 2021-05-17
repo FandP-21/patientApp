@@ -75,6 +75,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
     return this.fetchDoctors();
   }
 
+
   Future<Null> _filterSearch(int id) async {
     String url = Provider.of<UserModel>(context, listen: false).baseUrl;
     textController.text.isNotEmpty
@@ -340,13 +341,13 @@ class _DoctorSearchState extends State<DoctorSearch> {
                         : Row(
                             children: List.generate(
                               subServices.length,
-                              (index) => allBox(
+                              (index) => subServices[index]['name']!= null?allBox(
                                   subServices[index]['name']
                                       .toString()
                                       .toUpperCase(),
                                   MediaQuery.of(context).size.width * 0.35,
                                   subServices[index]['id'],
-                                  false),
+                                  false):Container(),
                             ),
                           )
                     // initialItems != null && initialItems.length > 0
@@ -365,7 +366,7 @@ class _DoctorSearchState extends State<DoctorSearch> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Text(
-                    '${doctorData.length ?? 0} registered doctor${doctorData.length == 1 ? '' : 's'}',
+                    '${doctorData.length ?? 0} registered doctor${doctorData.length<=1 ? '' : 's'}',
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: pixel24,
@@ -488,7 +489,6 @@ class _DoctorSearchState extends State<DoctorSearch> {
 
   Widget allBox(String title, double width, [int id, bool active]) {
     return Container(
-        width: width,
         margin: EdgeInsets.only(right: 7.0),
         child: Material(
             shape: RoundedRectangleBorder(

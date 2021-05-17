@@ -58,6 +58,7 @@ class _DoctorInfoState extends State<DoctorInfo> {
     super.initState();
     checkSubscription();
     getData();
+    // hmoData();
   }
 
   Future<dynamic> getData() async {
@@ -92,6 +93,17 @@ class _DoctorInfoState extends State<DoctorInfo> {
       "doctor": widget.doctor.id.toString(),
     });
   }
+  hmoData() async {
+    String id = Provider.of<UserModel>(context, listen: false).id;
+    String url = Provider.of<UserModel>(context, listen: false).baseUrl;
+    String token = Provider.of<UserModel>(context, listen: false).token;
+    var response = await http.get(url + "patient-hmo/$id/", headers: {
+      "Connection": 'keep-alive',
+      "Authorization": "Bearer " + token
+    });
+    print(response.body);
+    print("Asdf");
+  }
 
   Future<Null> handleBookingEnquiry() {
     String url = Provider.of<UserModel>(context, listen: false).baseUrl;
@@ -114,9 +126,11 @@ class _DoctorInfoState extends State<DoctorInfo> {
   Future removeDoctor() {}
   void checkSubscription() {
     String id = Provider.of<UserModel>(context, listen: false).id;
-    for (int i = 0; i < widget.doctor.hospital.patients.length; i++) {
-      if (widget.doctor.hospital.patients[i] == int.parse(id))
-        setState(() => isRegUnderHospital = true);
+    if (widget.doctor.hospital.patients!= null){
+      for (int i = 0; i < widget.doctor.hospital.patients.length; i++) {
+        if (widget.doctor.hospital.patients[i] == int.parse(id))
+          setState(() => isRegUnderHospital = true);
+      }
     }
   }
 
@@ -552,7 +566,7 @@ class _DoctorInfoState extends State<DoctorInfo> {
                       )),
                   SizedBox(height: 10),
                   SubText(
-                    title: widget.doctor.areaOfSpecialization[0].name,
+                    title: widget.doctor.areaOfSpecialization.length> 0?widget.doctor.areaOfSpecialization[0].name:'',
                     isCenter: false,
                   ),
                   SizedBox(height: 10),
@@ -672,7 +686,7 @@ class _DoctorInfoState extends State<DoctorInfo> {
                     title: 'Bio',
                     isCenter: false,
                   ),
-                  Text(widget.doctor.bioInfoOnSpecialization.toString(),
+                  Text(widget.doctor.bioInfoOnSpecialization!= null?widget.doctor.bioInfoOnSpecialization.toString():"",
                       style: TextStyle(
                         fontSize: sizer(true, 16.0, context),
                         fontWeight: FontWeight.w300,
@@ -715,7 +729,7 @@ class _DoctorInfoState extends State<DoctorInfo> {
                                 color: Color(0xff8E919C)),
                           ),
                           Text(
-                            widget.doctor.hospital.patients.length.toString() +
+                            widget.doctor.hospital.patients!= null?widget.doctor.hospital.patients.length.toString():'' +
                                 ' patients',
                             style: TextStyle(
                                 color: Color(0xff071232),

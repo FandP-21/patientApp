@@ -32,7 +32,7 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         _loading = true;
       });
-    String _baseUrl = "https://thc2020.herokuapp.com/";
+    String _baseUrl = "http://3.21.124.223/";
     var responseJson;
     Response response;
     Dio dio = new Dio();
@@ -114,7 +114,7 @@ class _SignUpState extends State<SignUp> {
           .setName(responseJson['data']['first_name']);
       print(responseJson);
       var authResponse = await http.get(
-          "https://thc2020.herokuapp.com/patient-list/${responseJson['patient_id'].toString()}/",
+          "http://3.21.124.223/patient-list/${responseJson['patient_id'].toString()}/",
           headers: {
             "Connection": 'keep-alive',
             "Authorization": "Bearer " + responseJson['access_token']

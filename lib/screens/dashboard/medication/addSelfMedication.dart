@@ -12,6 +12,7 @@ import 'package:thcMobile/components/backButtonWhite.dart';
 import 'package:thcMobile/components/authTextInput.dart';
 import 'package:thcMobile/helpers/store.dart';
 import 'package:thcMobile/provider/user.dart';
+import 'package:thcMobile/utils/call_utilities.dart';
 
 class AddSelfMedication extends StatefulWidget {
   AddSelfMedication({Key key, this.title, @required this.updateState})
@@ -25,10 +26,9 @@ class AddSelfMedication extends StatefulWidget {
 
 class _AddSelfMedicationState extends State<AddSelfMedication> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextEditingController noOfTablets = new TextEditingController();
-  TextEditingController dosage = new TextEditingController();
-  TextEditingController drugs = new TextEditingController();
+  TextEditingController noOfTablets = new TextEditingController(text: "25");
+  TextEditingController dosage = new TextEditingController(text: '25');
+  TextEditingController drugs = new TextEditingController(text: 'test');
   String _unit = 'mg';
   bool _autoValidate = false;
   bool loading = false;
@@ -48,42 +48,29 @@ class _AddSelfMedicationState extends State<AddSelfMedication> {
     String id = Provider.of<UserModel>(context, listen: false).id;
 
     setState(() => loading = true);
-
-    if (_treatmentCategory != 'Select treatment category' &&
-        dosage.text.isNotEmpty &&
-        noOfTablets.text.isNotEmpty &&
-        _drugId != null &&
-        _drugName != 'Select drug') {
-      var response = await http.post(url + 'self-medication/$id', headers: {
-        "Connection": 'keep-alive',
-        "Authorization": "Bearer " + token
-      }, body: {
-        "name": _treatmentCategory,
-        "patient": id.toString(),
-        "doctor": null,
-        "drug_sets[0]dosage": dosage.text,
-        "drug_sets[0]patient": id.toString(),
-        "drug_sets[0]frequency": _frequency.toString(),
-        "drug_sets[0]unit": _unit.toString(),
-        "drug_sets[0]no_of_tablets": noOfTablets.text,
-        "drug_sets[0]drug": _drugId.toString(),
-        "drug_sets[0]name": _drugName,
-      });
-
+    var response = await http.post(url + 'self-medication/$id', headers: {
+      "Connection": 'keep-alive',
+      "Authorization": "Bearer " + token
+    }, body: {
+      // "name": _treatmentCategory,
+      // "patient": id.toString(),
+      "drug_sets[0]dosage": dosage.text,
+      "drug_sets[0]patient": id.toString(),
+      "drug_sets[0]frequency": _frequency.toString(),
+      "drug_sets[0]unit": _unit.toString(),
+      "drug_sets[0]no_of_tablets": noOfTablets.text,
+      "drug_sets[0]drug": drugs.text,
+      "drug_sets[0]name": _drugName,
+    });
+    setState(() => loading = false);
+    if (response.statusCode == 200){
       print(jsonDecode(response.body));
       await widget.updateState();
       Fluttertoast.showToast(msg: 'Successful!');
       Future.delayed(Duration(seconds: 1), () => Navigator.pop(context));
-    } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('All fields are required!',
-            style: TextStyle(
-              fontSize: sizer(true, 15.0, context),
-              color: Colors.white,
-            )),
-      ));
+    }else{
+      Fluttertoast.showToast(msg: 'Error!');
     }
-    setState(() => loading = false);
   }
 
   @override
@@ -107,9 +94,7 @@ class _AddSelfMedicationState extends State<AddSelfMedication> {
                 top: sizer(false, 50, context),
                 left: sizer(true, 20, context),
                 right: sizer(true, 20, context)),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
               children: <Widget>[
                 Row(
                   mainAxisSize: MainAxisSize.max,
@@ -139,11 +124,7 @@ class _AddSelfMedicationState extends State<AddSelfMedication> {
                   ),
                 ),
                 SizedBox(height: 35),
-                new Form(
-                  key: _formKey,
-                  autovalidate: _autoValidate,
-                  child: customForm(),
-                ),
+                customForm(),
               ],
             ),
           ),
@@ -153,8 +134,7 @@ class _AddSelfMedicationState extends State<AddSelfMedication> {
   }
 
   Widget customForm() {
-    return Expanded(
-        child: Column(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
@@ -182,14 +162,17 @@ class _AddSelfMedicationState extends State<AddSelfMedication> {
                   children: <Widget>[
                     Expanded(
                         child: AuthTextInput(
-                      hintText: 'Enter dosage',
-                      onChanged: (text) {},
-                      controller: dosage,
-                    )),
+                          hintText: 'Enter dosage',
+                          onChanged: (text) {},
+                          controller: dosage,
+                          altTextColor: blue,
+                          border: BorderSide(color: blue),
+                        )
+                    ),
                     SizedBox(width: 16.0),
                     Container(
                       margin:
-                          EdgeInsets.only(bottom: sizer(false, 16, context)),
+                      EdgeInsets.only(bottom: sizer(false, 0, context)),
                       child: Container(
                         width: MediaQuery.of(context).size.width * 0.4,
                         padding: EdgeInsets.only(left: 20, top: 7, right: 20),
@@ -365,43 +348,37 @@ class _AddSelfMedicationState extends State<AddSelfMedication> {
         ),
         loading
             ? Container(
-                height: 50,
-                width: 50,
-                decoration: BoxDecoration(
-                  color: Color(0xff245DE8),
-                  borderRadius: BorderRadius.circular(50),
-                ),
-                child: CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                ),
-              )
-            : ButtonBlue(
-                onPressed: () {
-                  if (dosage.text.isNotEmpty &&
-                      drugs.text.isNotEmpty &&
-                      noOfTablets.text.isNotEmpty) {
-                    this.addMedication();
-                    // Navigator.pop(context);
-                  } else {
-                    _scaffoldKey.currentState.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          "All fields are required",
-                          style: TextStyle(
-                            fontSize: sizer(true, 15.0, context),
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                },
-                title: 'ADD'),
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            color: Color(0xff245DE8),
+            borderRadius: BorderRadius.circular(50),
+          ),
+          child: CircularProgressIndicator(
+            backgroundColor: Colors.white,
+          ),
+        )
+            : Container(
+          margin: EdgeInsets.only(top: 100),
+          child: ButtonBlue(
+              onPressed: () {
+                if(drugs.text.isEmpty){
+                  showInSnackBar('Enter Drugs Name',_scaffoldKey,context);
+                }else if (dosage.text.isEmpty){
+                  showInSnackBar('Enter Dosage',_scaffoldKey,context);
+                }else if (noOfTablets.text.isEmpty){
+                  showInSnackBar('Enter Tablets',_scaffoldKey,context);
+                }else{
+                  addMedication();
+                }
+              },
+              title: 'ADD'),
+        ),
         SizedBox(
           height: sizer(false, 32, context),
         ),
         SizedBox(height: 10)
       ],
-    ));
+    );
   }
 }

@@ -77,7 +77,6 @@ class _RequestsWidgetState extends State<RequestsWidget> {
       ].expand((x) => x).toList();
       loading = false;
     });
-
     prefs.setString("patientRequests", jsonEncode(patientRequests));
   }
 

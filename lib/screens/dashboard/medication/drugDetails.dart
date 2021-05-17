@@ -74,7 +74,9 @@ class _DrugDetailsState extends State<DrugDetails> {
                         SizedBox(height: 10),
                         ButtonBlue(
                           title: 'BUY',
-                          onPressed: () {},
+                          onPressed: () {
+
+                          },
                         ),
                         SizedBox(height: 43),
                         GestureDetector(

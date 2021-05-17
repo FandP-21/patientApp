@@ -44,7 +44,7 @@ class _SignInState extends State<SignIn> {
       setState(() {
         _loading = true;
       });
-    String _baseUrl = "https://thc2020.herokuapp.com/";
+    String _baseUrl = "http://3.21.124.223/";
     var responseJson;
     Response response;
     Dio dio = new Dio();
@@ -130,7 +130,7 @@ class _SignInState extends State<SignIn> {
             .setLName(responseJson['last_name']);
 
         var authResponse = await http.get(
-            "https://thc2020.herokuapp.com/patient-list/${responseJson['patient_id'].toString()}/",
+            "http://3.21.124.223/patient-list/${responseJson['patient_id'].toString()}/",
             headers: {
               "Connection": 'keep-alive',
               "Authorization": "Bearer " + responseJson['access_token']
@@ -206,7 +206,7 @@ class _SignInState extends State<SignIn> {
         // Write data to local
         currentUser = firebaseUser;
         await prefs.setString('firebaseId', currentUser.uid);
-        await http.patch("https://thc2020.herokuapp.com/patient-list/$id/",
+        await http.patch("http://3.21.124.223/patient-list/$id/",
             headers: {
               "Connection": 'keep-alive',
               "Authorization": "Bearer " + token
@@ -218,7 +218,7 @@ class _SignInState extends State<SignIn> {
       } else {
         // Write data to local
         await prefs.setString('firebaseId', documents[0].data()['id']);
-        await http.patch("https://thc2020.herokuapp.com/patient-list/$id/",
+        await http.patch("http://3.21.124.223/patient-list/$id/",
             headers: {
               "Connection": 'keep-alive',
               "Authorization": "Bearer " + token

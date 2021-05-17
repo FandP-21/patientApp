@@ -95,7 +95,7 @@ class _MessagesState extends State<Messages> {
                                                   .name,
                                               peerName: snapshot.data
                                                   .documents[index]["name"],
-                                              peerAvatar: 'https://thc2020.herokuapp.com/media/doctor_photo/process_3_t7oNy51.png',
+                                              peerAvatar: 'http://3.21.124.223/media/doctor_photo/process_3_t7oNy51.png',
                                               peerId: snapshot.data
                                                   .documents[index]["userId"],
                                             )),

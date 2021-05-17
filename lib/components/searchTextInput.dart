@@ -21,7 +21,7 @@ class SearchTextInput extends StatelessWidget {
     return TextFormField(
       controller: textController,
       onSaved: onChanged,
-      // onChanged: onChanged,
+      onChanged: onChanged,
       onFieldSubmitted: onChanged,
       style: TextStyle(
           color: altColor != null ? Colors.white : Color(0xff071232),

@@ -79,7 +79,7 @@ class _DoctorBodyState extends State<DoctorBody> {
     String id = Provider.of<UserModel>(context, listen: false).id;
 
     try {
-      var response = await http.get(url + "doctors-of-patient/" + id + '/',
+      var response = await http.get(url + "doctors-of-patient/$id/",
           headers: {
             "Connection": 'keep-alive',
             "Authorization": "Bearer " + token
@@ -205,6 +205,7 @@ class _DoctorBodyState extends State<DoctorBody> {
                         SizedBox(height: 16),
                         doctorsData.length > 0
                             ? ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
                                 itemCount: doctorsData.length,
                                 itemBuilder: (BuildContext ctxt, int index) {
@@ -247,7 +248,7 @@ class _DoctorBodyState extends State<DoctorBody> {
                                     itemCount: appointmentsData.length,
                                     itemBuilder:
                                         (BuildContext ctxt, int index) {
-                                      return new AppointmentBox(
+                                      return  AppointmentBox(
                                           isPrevious: false,
                                           appointment: Appointment.fromJson(
                                               appointmentsData[index]),

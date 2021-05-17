@@ -54,6 +54,7 @@ class _DiagnosticsWidgetState extends State<DiagnosticsWidget> {
         },
       ),
     );
+    print(response.data);
     setState(() => _labData = response.data);
     setState(() => loading = false);
     prefs.setString("labPlansData", jsonEncode(response.data));

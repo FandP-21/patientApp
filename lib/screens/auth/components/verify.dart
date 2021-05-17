@@ -61,7 +61,7 @@ class _VerifyBodyState extends State<VerifyBody> {
     setState(() {
       loading = true;
     });
-    String _baseUrl = "https://thc2020.herokuapp.com/";
+    String _baseUrl = "http://3.21.124.223/";
     String _id = Provider.of<UserModel>(context, listen: false).id;
     var responseJson;
     Response response;

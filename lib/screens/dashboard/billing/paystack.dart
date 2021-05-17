@@ -4,7 +4,7 @@ import 'package:flutter_paystack/flutter_paystack.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:thcMobile/services/paymentMethods.dart';
 
-String backendUrl = 'https://thc2020.herokuapp.com/';
+String backendUrl = 'http://3.21.124.223/';
 String paystackPublicKey = 'pk_test_40de5d453203b696cba6bd4f8b5dfb162a4faa27';
 const String appName = 'Payment';
 

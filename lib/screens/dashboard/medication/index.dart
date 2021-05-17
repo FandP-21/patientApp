@@ -29,8 +29,10 @@ class Medication extends StatefulWidget {
 
 class _MedicationState extends State<Medication> {
   bool loading = false;
+  TextEditingController searchController = new TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   List<dynamic> medications = [];
+  List<dynamic> copyListList = [];
   @override
   void initState() {
     super.initState();
@@ -44,7 +46,10 @@ class _MedicationState extends State<Medication> {
     String id = Provider.of<UserModel>(context, listen: false).id;
 
     if (prefs.containsKey("medication")) {
-      setState(() => medications = jsonDecode(prefs.getString("medication")));
+      setState(() {
+        medications = jsonDecode(prefs.getString("medication"));
+        copyListList = jsonDecode(prefs.getString("medication"));
+      });
     } else {
       setState(() => loading = true);
     }
@@ -54,7 +59,11 @@ class _MedicationState extends State<Medication> {
             "Connection": 'keep-alive',
             "Authorization": "Bearer " + token
           });
-      setState(() => medications = jsonDecode(response.body));
+
+      setState((){
+        medications = jsonDecode(response.body);
+        copyListList = jsonDecode(response.body);
+      });
       print(response.body);
       await prefs.setString("medication", response.body);
     } on SocketException {
@@ -73,6 +82,31 @@ class _MedicationState extends State<Medication> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void filterSearchResults(String query) {
+    if (query.isNotEmpty) {
+      List<dynamic> dummyListData = List<dynamic>();
+      for (int i = 0; i < copyListList.length; i++) {
+        if (copyListList[i]['name']
+            .toString()
+            .toLowerCase()
+            .contains(query.toLowerCase())) {
+          dummyListData.add(copyListList[i]);
+        }
+      }
+      setState(() {
+        medications.clear();
+        medications.addAll(dummyListData);
+      });
+      print(copyListList);
+      return;
+    } else {
+      setState(() {
+        medications.clear();
+        medications.addAll(copyListList);
+      });
+    }
   }
 
   @override
@@ -108,7 +142,10 @@ class _MedicationState extends State<Medication> {
                     SizedBox(height: 35),
                     SearchTextInput(
                       hintText: 'Search for a drug',
-                      onChanged: (text) {},
+                      textController: searchController,
+                      onChanged: (text) {
+                        filterSearchResults(text);
+                      },
                     ),
                     SizedBox(height: 16),
                     HmoHeader(
@@ -121,6 +158,7 @@ class _MedicationState extends State<Medication> {
                         ? CenterLoader()
                         : medications != null && medications.length > 0
                             ? ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
                                 itemCount: medications.length,
@@ -140,6 +178,7 @@ class _MedicationState extends State<Medication> {
                                 isButton: false),
                     SizedBox(height: 20),
                     medicationButton(),
+                    SizedBox(height: 50),
                   ]),
             ),
           ),

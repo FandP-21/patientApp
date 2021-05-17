@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:thcMobile/constants/strings.dart';
+import 'package:thcMobile/helpers/sizeCalculator.dart';
 import 'package:thcMobile/models/call.dart';
 import 'package:thcMobile/models/log.dart';
 import 'package:thcMobile/models/user_.dart';
@@ -63,4 +64,18 @@ class FlutterToast {
         textColor: Colors.white,
         fontSize: 16.0);
   }
+}
+void showInSnackBar(String message, GlobalKey<ScaffoldState> scaffoldKey,BuildContext context) {
+  scaffoldKey.currentState.showSnackBar(SnackBar(
+    elevation: 4,
+    behavior: SnackBarBehavior.fixed,
+    content: Text(
+      message,
+      style: TextStyle(
+        fontSize: sizer(true, 15.0, context),
+        color: Colors.white,
+      )
+    ),
+    duration: Duration(milliseconds: 2000),
+  ));
 }

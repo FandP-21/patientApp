@@ -59,7 +59,7 @@ class _MessageListItemState extends State<MessageListItem> {
                     children: <Widget>[
                       ClipRRect(
                           borderRadius: BorderRadius.circular(50),
-                          child: Image.network('https://thc2020.herokuapp.com/media/doctor_photo/process_3_t7oNy51.png',
+                          child: Image.network('http://3.21.124.223/media/doctor_photo/process_3_t7oNy51.png',
                               fit: BoxFit.cover, width: 60, height: 60)),
                       SizedBox(width: width(15, false)),
                       Expanded(

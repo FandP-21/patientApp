@@ -126,7 +126,7 @@ class _BuyMedicationState extends State<BuyMedication> {
                                 ? SubText(title: '', isCenter: false)
                                 : SubText(
                                     title:
-                                        'This pharmacy is available at the following places',
+                                        'This ${widget.drugs[0]} is available at the following places',
                                     isCenter: false),
                         SizedBox(height: 23),
                         loading

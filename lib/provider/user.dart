@@ -9,7 +9,8 @@ class UserModel extends ChangeNotifier {
   String _id = '';
   String _mainId = '';
   String _token = '';
-  String _baseUrl = "https://thc2020.herokuapp.com/";
+  // String _baseUrl = "http://3.21.124.223/";
+  String _baseUrl = "http://3.21.124.223/";
   String _name = '';
   String _lname = '';
   String _deviceToken = '';
